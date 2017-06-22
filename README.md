@@ -1,3 +1,3 @@
-# Banking-System
+# Bank Account Management System
 Upon execution of this program you will be prompted with a menu which gives instructions on how to interact with the program.
 Some of the functions of this program include, adding a client, adding a savings account or checking account to a specific client, depositing a check into a checking account, withdrawing money from an account, etc...
