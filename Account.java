@@ -1,5 +1,5 @@
 
-public class Account implements IAccount
+public abstract class Account implements IAccount
 {
 	private int accountNumber = 0;
 	private double balance = 0.0;
