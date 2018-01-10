@@ -1,13 +1,10 @@
 
-public abstract class Account implements IAccount
+public class Account implements IAccount
 {
-	int accountNumber = 0;
-	double balance = 0.0;
+	private int accountNumber = 0;
+	private double balance = 0.0;
 	
-	public Account()
-	{
-		
-	}
+	public Account(){}
 	
 	public Account(int accountNumber) 
 	{
@@ -27,14 +24,10 @@ public abstract class Account implements IAccount
 	
 	public boolean withdrawl(double amount)
 	{
-		if(amount <= balance)
+		if(amount <= balance && amount > 0)
 		{
 			balance -= amount;
 			return true;
-		}
-		else if (amount < 0)
-		{
-			return false;
 		}
 		else
 		{
@@ -44,7 +37,7 @@ public abstract class Account implements IAccount
 	
 	public boolean deposit(double amount)
 	{
-		if(amount >= 0)
+		if(amount > 0)
 		{
 			balance += amount;
 			return true;
