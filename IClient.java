@@ -9,5 +9,13 @@ public interface IClient
 	
 	public Date getCreationDate();
 	
-	public List<Account> getAccounts();
+	public void removeAccount(IAccount account);
+	
+	public void addCheckingAccount(int accountNumber);
+	
+	public void addSavingsAccount(int accountNumber, double interestRate);
+	
+	public List<IAccount> getAccounts();
+	
+	public String accountsString();
 }
