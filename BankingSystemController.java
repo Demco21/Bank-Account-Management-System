@@ -5,20 +5,17 @@ import java.util.List;
 
 public class BankingSystemController 
 {
-	private List<Client> clients = new LinkedList<Client>();
+	private List<IClient> clients = new LinkedList<IClient>();
 	private GUIDGenerator newID = new GUIDGenerator();
 	
-	public BankingSystemController() 
-	{
-
-	}
+	public BankingSystemController(){}
 	
-	public List<Account> getAccounts(Client client)
+	public List<IAccount> getAccounts(IClient client)
 	{
 		return client.getAccounts();
 	}
 	
-	public String getAccountsString(Client client)
+	public String getAccountsString(IClient client)
 	{
 		return client.accountsString();
 	}
@@ -58,40 +55,74 @@ public class BankingSystemController
 		return this.newID;
 	}
 	
-	public void addClient(String firstName, String lastName, String address, int clientID)
+	public void addClient(String firstName, String lastName, String address)
 	{
 		Person accountHolder = new Person(firstName, lastName, address);
-		Client newClient = new Client(accountHolder, clientID);
+		IClient newClient = new Client(accountHolder, getNewID().generateID());
 		clients.add(newClient);
 	}
 	
-	public String getClientListString()
+	
+	public String clientListToString()
 	{
-		String retval = "";
-		for(Client c : this.clients)
-		{
-			 retval += c.toString();
-		}
-		return retval;
+		String clientList = "";
+		
+		for(IClient c : this.clients)
+			 clientList += c.toString();
+		
+		if(clientList.equals(""))
+			clientList = "No clients.";
+			
+		return clientList;
 	}
 	
-	public Client getClientByID(int id)
+	public IClient getClientByID(int clientID)
 	{
-		for(Client c : clients)
+		for(IClient c : clients)
 		{
-			if(id == c.getClientID())
-			{
+			if(clientID == c.getClientID())
 				return c;
-			}
 		}
+		
 		return null;
 	}
 	
-	public Account getAccountByNum(int accountNum)
+	public String lookUpClient(int clientID)
 	{
-		for(Client client : clients)
+		String clientInfo;
+		IClient client = getClientByID(clientID);
+		if(client != null)
 		{
-			for(Account acct : client.getAccounts())
+			clientInfo = client.toString();
+		}
+		else
+		{
+			clientInfo = "Client does not exist";
+		}
+		return clientInfo;
+	}
+	
+	public String lookUpAccount(int acctNum)
+	{
+		String acctInfo;
+		IAccount account = getAccountByNum(acctNum);
+		
+		if(account != null)
+		{
+			acctInfo = account.toString();
+		}
+		else
+		{
+			acctInfo = "Account does not exist.";
+		}
+		return acctInfo;
+	}
+	
+	public IAccount getAccountByNum(int accountNum)
+	{
+		for(IClient client : clients)
+		{
+			for(IAccount acct : client.getAccounts())
 			{
 				if(accountNum == acct.getAccountNumber())
 				{
@@ -102,44 +133,60 @@ public class BankingSystemController
 		return null;
 	}
 	
-	public boolean deposit(Account account, double amount)
+	public boolean deposit(int acctNum, double amount)
 	{
+		IAccount account = getAccountByNum(acctNum);
+		
 		if(account.deposit(amount) == true)
 			return true;
 		else
 			return false;
 	}
 	
-	public boolean withdrawl(Account account, double amount)
+	public boolean withdrawl(int acctNum, double amount)
 	{
+		IAccount account = getAccountByNum(acctNum);
+		
 		if(account.withdrawl(amount) == true)
 			return true;
 		else
 			return false;
 	}
 	
-	public void cashCheck(int accountNum, int checkNumber, double checkAmount)
+	public void cashCheck(int acctNum, int checkNumber, double checkAmount)
 	{
-		CheckingAccount account = (CheckingAccount) getAccountByNum(accountNum);
+		CheckingAccount account = (CheckingAccount) getAccountByNum(acctNum);
 		Check check = new Check(checkNumber, checkAmount);
 		account.cashCheck(check);
 	}
 	
-	public void addCheckingAccount(Client client)
+	public boolean addCheckingAccount(int clientID)
 	{
+		if(getClientByID(clientID) == null) //if no client is found
+		{
+			return false;
+		}
+		IClient client = getClientByID(clientID);
 		client.addCheckingAccount(this.newID.generateID());
+		return true;
 	}
 	
-	public void addSavingsAccount(Client client, double interestRate)
+	public boolean addSavingsAccount(int clientID, double interestRate)
 	{
+		if(getClientByID(clientID) == null) //if no client is found
+		{
+			return false;
+		}
+		IClient client = getClientByID(clientID);
 		client.addSavingsAccount(this.newID.generateID(), interestRate);
+		return true;
 	}	
 	
 	public boolean closeAccount(int accountNumber)
 	{
-		for (Client client: clients)
+		for (IClient client: clients)
 		{
-			for (Account acct : client.getAccounts())
+			for (IAccount acct : client.getAccounts())
 			{
 				if(accountNumber == acct.getAccountNumber())
 				{
@@ -151,12 +198,12 @@ public class BankingSystemController
 		return false;
 	}
 	
-	public String getCheckHistory(Account checkingAccount)
+	public String getCheckHistory(IAccount checkingAccount)
 	{
 		return checkingAccount.toString();
 	}
 	
-	public void removeClient(Client client)
+	public void removeClient(IClient client)
 	{
 		clients.remove(client);
 	}
