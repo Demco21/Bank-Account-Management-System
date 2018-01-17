@@ -1,18 +1,15 @@
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class CheckingAccount extends Account 
+public class CheckingAccount extends Account
 {
 	private Collection<Check> cashedChecks = new LinkedList<Check>();
 	
-	public CheckingAccount() 
-	{
+	public CheckingAccount(){}
 
-	}
-
-	public CheckingAccount(int accountNumber) 
+	public CheckingAccount(int accountNumber, int clientID) 
 	{
-		super(accountNumber);
+		super(accountNumber, clientID);
 	}
 
 	public Collection<Check> getCashedChecks() 
@@ -33,5 +30,4 @@ public class CheckingAccount extends Account
 		else
 			return "CheckingAccount: " + super.toString() + ", CashedCheckHistory=" + cashedChecks + "\n";
 	}
-	
 }
