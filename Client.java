@@ -7,16 +7,12 @@ public class Client implements IClient
 	private Person accountHolder;
 	private int clientID;
 	private Date creationDate;
-	private List<Account> accounts = new LinkedList<Account>();
+	private List<IAccount> accounts = new LinkedList<IAccount>();
 	
-	public Client()
-	{
-
-	}
+	public Client(){}
 
 	public Client(Person accountHolder, int clientID) 
 	{
-		super();
 		this.accountHolder = accountHolder;
 		this.clientID = clientID;
 		this.creationDate = new Date();
@@ -37,36 +33,46 @@ public class Client implements IClient
 		return creationDate;
 	}
 	
-	public List<Account> getAccounts()
+	public IAccount getAccount(int accountNum)
+	{
+		for(IAccount account: accounts)
+			if(account.getAccountNumber() == accountNum)
+				return account;
+		return null;
+	}
+	
+	public List<IAccount> getAccounts()
 	{
 		return this.accounts;
 	}
 
-	public void addCheckingAccount(int accountNumber)
+	public IAccount addCheckingAccount(int accountNumber)
 	{
-		CheckingAccount newAccount = new CheckingAccount(accountNumber);
+		IAccount newAccount = new CheckingAccount(accountNumber, this.clientID);
 		this.accounts.add(newAccount);
+		return newAccount;
 	}
 	
-	public void addSavingsAccount(int accountNumber, double interestRate)
+	public IAccount addSavingsAccount(int accountNumber, double interestRate)
 	{
-		SavingsAccount newAccount = new SavingsAccount(accountNumber, interestRate);
+		IAccount newAccount = new SavingsAccount(accountNumber, this.clientID, interestRate);
 		this.accounts.add(newAccount);
+		return newAccount;
 	}
 	
-	public void removeAccount(Account account)
+	public void removeAccount(IAccount account)
 	{
 		this.accounts.remove(account);
 	}
 	
-	public String accountsString()
+	public String clientAccountsToString()
 	{
-		String retval = new String();
-		for(Account account: this.accounts)
+		String accountsInfo = new String();
+		for(IAccount account: this.accounts)
 		{
-			retval += account.toString();
+			accountsInfo += account.toString();
 		}
-		return retval;
+		return accountsInfo;
 	}
 	
 	@Override
@@ -75,7 +81,6 @@ public class Client implements IClient
 		if(this.accounts.isEmpty() == true)
 			return "\nClient: " + accountHolder + ", ID=" + clientID + "\n*Client has no accounts*\n" + "Created on " + creationDate + "\n" + "-----------------------------------------------------------";
 		else
-			return "\nClient: " + accountHolder + ", ID=" + clientID + "\n" + this.accountsString() + "Created on " + creationDate + "\n"+ "-----------------------------------------------------------";
+			return "\nClient: " + accountHolder + ", ID=" + clientID + "\n" + this.clientAccountsToString() + "Created on " + creationDate + "\n"+ "-----------------------------------------------------------";
 	}
-	
 }
