@@ -7,7 +7,7 @@ public class BankingSystemCommandLine
 	private BankingSystemController controller = new BankingSystemController();
 	private static final String exitCommand = "exit";
 	private Scanner scanner = new Scanner(System.in);
-	private String command = "";
+	private String command = new String();
 	
 	private BankingSystemCommandLine(){}
 	
@@ -20,7 +20,7 @@ public class BankingSystemCommandLine
 		}
 		else
 		{
-			System.err.println("Can only have one instance of BankingSystemCommandLine.");
+			System.out.println("Can only have one instance of BankingSystemCommandLine.");
 			return null;
 		}
 	}
@@ -28,12 +28,9 @@ public class BankingSystemCommandLine
 	public void commandLoop()
 	{	
 		printMenu();
-		
-		while(command.equals(exitCommand) == false)
+		while(!command.equals(exitCommand))
 		{
-			command = "";
 			command = getNextLine();
-			
 			switch(command)
 			{
 				case "add client": addClient();
@@ -68,7 +65,7 @@ public class BankingSystemCommandLine
 				break;
 				case "sort by creation date": sortClientByCreationDate();
 				break;
-				case "sort accounts b ynumber": sortAccountsByNumber();
+				case "sort accounts by number": sortAccountsByNumber();
 				break;
 				case "sort accounts by balance": sortAccountsByBalance();
 				break;
@@ -83,18 +80,11 @@ public class BankingSystemCommandLine
 			}
 		}
 	}
-	
+
 	public String getNextLine()
 	{
-		String userInput = "";
-		try
-		{
-			userInput = scanner.nextLine();
-		}
-		catch(InputMismatchException inputMismatchException)
-		{
-			System.err.println("Error: " + inputMismatchException);
-		}
+		String userInput = new String();
+		userInput = scanner.nextLine();
 		return userInput;
 	}
 	
@@ -139,50 +129,25 @@ public class BankingSystemCommandLine
 		
 		controller.addClient(firstName, lastName, address);
 		
-		System.out.println("This client's ID number is: " + controller.getNewID().getLastID());
+		System.out.println("This client's ID number is: " + controller.getGUID().getLastID());
 	}
 	
 	public void addAccount()
-	{
-		System.out.println("Enter 'checking' to add a checking account");
-		System.out.println("Enter 'savings' to add a savings account");
+	{	
+		System.out.println("Enter your ID");
+		int clientID = getNextInt();
+		scanner.nextLine(); //this catches the newline character after entering the ID number
+		
+		System.out.println("Enter 'checking' to add a checking account.\nEnter 'savings' to add a savings account.");
 		String acctType = getNextLine();
+		
+		System.out.println("If you are creating a savings account, enter the interest rate otherwise enter 0.");
+		double interestRate = getNextDouble();
 
-		if(acctType.equals("checking"))
-		{
-			System.out.println("Enter your ID");
-			int clientID = getNextInt();
-			
-			if(controller.addCheckingAccount(clientID) == true)//search for client and add checking account
-			{
-				System.out.println("Your checking account number is " + controller.getNewID().getLastID());
-			}
-			else
-			{
-				System.out.println("Client does not exist.");
-			}
-		}
-		else if(acctType.equals("savings"))
-		{	
-			System.out.println("Enter an interest rate");
-			double interest = getNextDouble();
-			
-			System.out.println("What is your ID");
-			int clientID = getNextInt();
-			
-			if(controller.addSavingsAccount(clientID, interest) == true)//search for client and add checking account
-			{
-				System.out.println("Your checking account number is " + controller.getNewID().getLastID());
-			}
-			else
-			{
-				System.out.println("Client does not exist.");
-			}
-		}
+		if(controller.addAccount(acctType, clientID, interestRate) == true)
+			System.out.println("Your account has been created.\nYour account number is " + controller.getGUID().getLastID());
 		else
-		{
-			System.out.println("Invalid Input.");
-		}
+			System.out.println("Failed to create account.");
 	}
 	
 	public void printClientList()
@@ -209,11 +174,11 @@ public class BankingSystemCommandLine
 	
 	public void withdrawl()
 	{
-		System.out.println("Enter the amount.");
-		double amount = getNextDouble();
-		
 		System.out.println("Enter the account number");
 		int acctNum = getNextInt();
+		
+		System.out.println("Enter the amount.");
+		double amount = getNextDouble();
 		
 		if(controller.getAccountByNum(acctNum) == null)
 			System.out.println("Account does not exist.");
@@ -228,11 +193,11 @@ public class BankingSystemCommandLine
 	
 	public void deposit()
 	{
-		System.out.println("Enter the amount.");
-		double amount = getNextDouble();
-		
 		System.out.println("Enter the account number");
 		int acctNum = getNextInt();
+		
+		System.out.println("Enter the amount.");
+		double amount = getNextDouble();
 		
 		if(controller.getAccountByNum(acctNum) == null)
 			System.out.println("Account does not exist.");
@@ -247,138 +212,47 @@ public class BankingSystemCommandLine
 	
 	public void transfer()
 	{
-		System.out.println("Enter '1' to transfer from checking to savings.");
-		System.out.println("Enter '2' to transfer from savings to checking.");
-		int transfer = getNextInt();
+		System.out.println("Enter the client's ID.");
+		int clientID = getNextInt();
+		System.out.println("Enter the account number you wish to transfer from.");
+		int acctNum1 = getNextInt();
+		System.out.println("Enter the account number you wish to transfer to.");
+		int acctNum2 = getNextInt();
+		System.out.println("Enter the amount you would like to transfer.");
+		double amount = getNextDouble();
 		
-		if(transfer == 1)
+		if(controller.getClientByID(clientID) != null)
 		{
-			System.out.println("Enter the checking account number you would like to transfer from");
-			int acctNum1 = getNextInt();
-			
-			if(controller.getAccountByNum(acctNum1) == null)
-			{
-				System.out.println("Account does not exist.");
-			}
-			else if(controller.getAccountByNum(acctNum1) instanceof SavingsAccount)
-			{
-				System.out.println("Account entered is not a checking account.");
-			}
-			else if(controller.getAccountByNum(acctNum1) instanceof CheckingAccount)
-			{
-				System.out.println("Enter the savings account number you would like to transfer to.");
-				int acctNum2 = getNextInt();
-				
-				if(controller.getAccountByNum(acctNum2) == null)
-				{
-					System.out.println("Account does not exist.");
-				}
-				else if(controller.getAccountByNum(acctNum2) instanceof CheckingAccount)
-				{
-					System.out.println("Account entered is not a savings account.");
-				}
-				else if(controller.getAccountByNum(acctNum2) instanceof SavingsAccount)
-				{
-					System.out.println("Enter the amount you would like to transfer.");
-					double amount = getNextDouble();
-					
-					if(controller.withdrawl(acctNum1, amount) == true)
-					{
-						if(controller.deposit(acctNum2, amount) == true)
-							System.out.println("Transfer was successful.");
-						else
-							System.out.println("Transfer failed.");
-					}
-					else
-					{
-						System.out.println("Insufficient funds.");
-					}
-				}
-				
-			}
-			
-		}
-		else if(transfer == 2)
-		{
-			System.out.println("Enter the savings account number you would like to transfer from");
-			int acctNum1 = getNextInt();
-			
-			if(controller.getAccountByNum(acctNum1) == null)
-			{
-				System.out.println("Account does not exist.");
-			}
-			else if(controller.getAccountByNum(acctNum1) instanceof CheckingAccount)
-			{
-				System.out.println("Account entered is not a savings account.");
-			}
-			else if(controller.getAccountByNum(acctNum1) instanceof SavingsAccount)
-			{
-				System.out.println("Enter the checking account number you would like to transfer to.");
-				int acctNum2 = getNextInt();
-				
-				if(controller.getAccountByNum(acctNum2) == null)
-				{
-					System.out.println("Account does not exist.");
-				}
-				else if(controller.getAccountByNum(acctNum2) instanceof SavingsAccount)
-				{
-					System.out.println("Account entered is not a checking account.");
-				}
-				else if(controller.getAccountByNum(acctNum2) instanceof CheckingAccount)
-				{
-					System.out.println("Enter the amount you would like to transfer.");
-					double amount = getNextDouble();
-					
-					if(controller.withdrawl(acctNum1, amount) == true)
-					{
-						if(controller.deposit(acctNum2, amount) == true)
-							System.out.println("Transfer was successful.");
-						else
-							System.out.println("Transfer failed.");
-					}
-					else
-					{
-						System.out.println("Insufficient funds.");
-					}
-				}
-				
-			}
+			if(controller.transfer(clientID, acctNum1, acctNum2, amount) == true)
+				System.out.println("Transfer was successful.");
+			else
+				System.out.println("Transfer failed. Check that the account numbers entered are correct and that you have sufficient funds.");
 		}
 		else
-		{
-			System.out.println("Invalid input.");
-		}
+			System.out.println("Could not find the client.");
 	}
 	
 	public void cashCheck()
-	{	
+	{
 		System.out.println("Enter the checking account number.");
 		int acctNum = getNextInt();
-		
+
 		if(controller.getAccountByNum(acctNum) == null)
-		{
 			System.out.println("Account does not exist.");
-		}
 		else if(controller.getAccountByNum(acctNum) instanceof SavingsAccount)
-		{
 			System.out.println("Account entered is not a checking account.");
-		}
 		else if (controller.getAccountByNum(acctNum) instanceof CheckingAccount)
 		{
 			System.out.println("Enter the check number.");
 			int checkNumber = getNextInt();
-		
 			System.out.println("Enter the check amount.");
 			Double checkAmount = getNextDouble();
 		
 				if(checkNumber < 0 || checkAmount < 0)
-				{
 					System.out.println("Cannot cash this check.");
-				}
 				else
 				{
 					controller.cashCheck(acctNum, checkNumber, checkAmount);
-		
 					System.out.println("Your check has been cashed.");
 				}
 		}
@@ -390,17 +264,11 @@ public class BankingSystemCommandLine
 		int acctNum = getNextInt();
 		
 		if(controller.getAccountByNum(acctNum) == null)
-		{
 			System.out.println("Account does not exist.");
-		}
 		else if(controller.getAccountByNum(acctNum) instanceof SavingsAccount)
-		{
-			System.out.println("This is not a checking account.");
-		}
+			System.out.println("Cannot cash a check into a savings account.");
 		else if (controller.getAccountByNum(acctNum) instanceof CheckingAccount)
-		{
-			System.out.println(controller.getCheckHistory(controller.getAccountByNum(acctNum)));
-		}
+			System.out.println(controller.getCheckHistory(acctNum));
 	}
 	
 	public void closeAccount()
@@ -409,13 +277,13 @@ public class BankingSystemCommandLine
 		int acctNum = getNextInt();
 		
 		if(controller.getAccountByNum(acctNum) == null)
-		{
 			System.out.println("Account does not exist.");
-		}
 		else
 		{
-			controller.closeAccount(acctNum);
-			System.out.println("Account has successfully been closed.");
+			if(controller.closeAccount(acctNum) == true)
+				System.out.println("Account has successfully been closed.");
+			else
+				System.out.println("Failed to close the account.");
 		}
 	}
 	
@@ -424,67 +292,43 @@ public class BankingSystemCommandLine
 		System.out.println("Enter the client ID.");
 		int clientID = getNextInt();
 		
-		if(controller.getClientByID(clientID) == null)
-		{
-			System.out.println("Client does not exist.");
-		}
-		else
-		{
-			controller.removeClient(controller.getClientByID(clientID));
+		if(controller.removeClient(clientID) == true)
 			System.out.println("Client has successfully been removed.");
-		}
+		else
+			System.out.println("Client does not exist.");
+
 	}
 	
 	public void sortClientByID()
-	{	
-		if(controller.clientListToString().equals(""))
-		{
-			System.out.println("No clients.");
-		}
-		else
-		{
-			controller.sortByID();
+	{
+		if(controller.sortByID())
 			printClientList();
-		}
+		else
+			System.out.println("No clients.");
 	}
 	
 	public void sortClientByFirstName()
 	{	
-		if(controller.clientListToString().equals(""))
-		{
-			System.out.println("No clients.");
-		}
-		else
-		{
-			controller.sortByFirstName();
+		if(controller.sortByFirstName())
 			printClientList();
-		}
+		else
+			System.out.println("No clients.");
 	}
 	
 	public void sortClientByLastName()
 	{	
-		if(controller.clientListToString().equals(""))
-		{
-			System.out.println("No clients.");
-		}
-		else
-		{
-			controller.sortByLastName();
+		if(controller.sortByLastName())
 			printClientList();
-		}
+		else
+			System.out.println("No clients.");
 	}
 	
 	public void sortClientByCreationDate()
 	{	
-		if(controller.clientListToString().equals(""))
-		{
-			System.out.println("No clients.");
-		}
-		else
-		{
-			controller.sortByCreationDate();
+		if(controller.sortByCreationDate())
 			printClientList();
-		}
+		else
+			System.out.println("No clients.");
 	}
 	
 	public void sortAccountsByNumber()
@@ -493,20 +337,16 @@ public class BankingSystemCommandLine
 		int clientID = getNextInt();
 		
 		if(controller.getClientByID(clientID) == null)
-		{
 			System.out.println("Client does not exist.");
-		}
 		else
 		{
-			if(controller.getClientByID(clientID).getAccounts() == null)
+			if(controller.sortByAccountNum(clientID) == true)
 			{
-				System.out.println("Client has no accounts.");
+				String accountList = controller.getAccountsString(clientID);
+				System.out.println(accountList);
 			}
 			else
-			{
-				controller.sortByAccountNum(controller.getClientByID(clientID));
-				System.out.println(controller.getAccountsString(controller.getClientByID(clientID)));
-			}
+				System.out.println("Client has no accounts.");
 		}
 	}
 	
@@ -516,20 +356,16 @@ public class BankingSystemCommandLine
 		int clientID = getNextInt();
 		
 		if(controller.getClientByID(clientID) == null)
-		{
 			System.out.println("Client does not exist.");
-		}
 		else
 		{
-			if(controller.getClientByID(clientID).getAccounts() == null)
+			if(controller.sortByAccountBalance(clientID) == true)
 			{
-				System.out.println("Client has no accounts.");
+				String accountList = controller.getAccountsString(clientID);
+				System.out.println(accountList);
 			}
 			else
-			{
-				controller.sortByAccountBalance(controller.getClientByID(clientID));
-				System.out.println(controller.getAccountsString(controller.getClientByID(clientID)));
-			}
+				System.out.println("Client has no accounts.");
 		}
 	}
 	
@@ -556,5 +392,4 @@ public class BankingSystemCommandLine
 		System.out.println("Enter 'menu' to print the menu.");
 		System.out.println("Enter 'exit' to exit the program.");
 	}
-	
 }
