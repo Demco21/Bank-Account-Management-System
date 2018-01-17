@@ -11,11 +11,13 @@ public interface IClient
 	
 	public void removeAccount(IAccount account);
 	
-	public void addCheckingAccount(int accountNumber);
+	public IAccount addCheckingAccount(int accountNumber);
 	
-	public void addSavingsAccount(int accountNumber, double interestRate);
+	public IAccount addSavingsAccount(int accountNumber, double interestRate);
+	
+	public IAccount getAccount(int accountNum);
 	
 	public List<IAccount> getAccounts();
 	
-	public String accountsString();
+	public String clientAccountsToString();
 }
