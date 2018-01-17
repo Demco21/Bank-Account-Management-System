@@ -1,12 +1,8 @@
-
 public class GUIDGenerator 
 {
 	private int lastIDUsed = 1;
 	
-	public GUIDGenerator() 
-	{
-	
-	}
+	public GUIDGenerator() {}
 
 	public int generateID()
 	{
@@ -18,6 +14,5 @@ public class GUIDGenerator
 	public int getLastID()
 	{
 		return this.lastIDUsed-1;
-	}
-	
+	}	
 }
