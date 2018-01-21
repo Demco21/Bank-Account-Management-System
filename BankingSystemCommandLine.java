@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class BankingSystemCommandLine 
 {
-	private static BankingSystemCommandLine instance = null;
+	private static BankingSystemCommandLine instance = new BankingSystemCommandLine();
 	private BankingSystemController controller = new BankingSystemController();
 	private static final String exitCommand = "exit";
 	private Scanner scanner = new Scanner(System.in);
@@ -13,16 +13,7 @@ public class BankingSystemCommandLine
 	
 	public static BankingSystemCommandLine getInstance()
 	{
-		if(instance == null)
-		{
-			instance = new BankingSystemCommandLine();
-			return instance;
-		}
-		else
-		{
-			System.out.println("Can only have one instance of BankingSystemCommandLine.");
-			return null;
-		}
+		return instance;
 	}
 	
 	public void commandLoop()
@@ -71,7 +62,7 @@ public class BankingSystemCommandLine
 				break;
 				case "menu": printMenu();
 				break;
-				case "exit": System.out.println("Goodbye.");
+				case exitCommand: System.out.println("Goodbye.");
 				break;
 				case "":
 				break;
