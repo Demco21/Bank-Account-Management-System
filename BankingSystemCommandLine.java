@@ -85,6 +85,7 @@ public class BankingSystemCommandLine
 		try
 		{
 			userInput = scanner.nextInt();
+			scanner.nextLine();
 		}
 		catch(InputMismatchException inputMismatchException)
 		{
@@ -99,6 +100,7 @@ public class BankingSystemCommandLine
 		try
 		{
 			userInput = scanner.nextDouble();
+			scanner.nextLine();
 		}
 		catch(InputMismatchException inputMismatchException)
 		{
@@ -127,7 +129,6 @@ public class BankingSystemCommandLine
 	{	
 		System.out.println("Enter your ID");
 		int clientID = getNextInt();
-		scanner.nextLine(); //this catches the newline character after entering the ID number
 		
 		System.out.println("Enter 'checking' to add a checking account.\nEnter 'savings' to add a savings account.");
 		String acctType = getNextLine();
