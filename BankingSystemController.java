@@ -92,6 +92,17 @@ public class BankingSystemController
 		clients.add(client);
 	}
 	
+	public boolean addAccount(String type, int clientID, double interestRate)
+	{	
+		AccountFactory accountFactory = new AccountFactory();
+		IClient client = getClientByID(clientID);
+		IAccount account = accountFactory.createAccount(type, client, this.guid.generateID(), interestRate);
+		if(account == null)
+			return false;
+		accountTable.add(account.getAccountNumber(), account);
+		return true;
+	}
+	
 	public String clientListToString()
 	{
 		String clientList = new String();
@@ -201,16 +212,6 @@ public class BankingSystemController
 			return true;
 		}
 		return false;
-	}
-	
-	public boolean addAccount(String type, int clientID, double interestRate)
-	{	
-		AccountFactory accountFactory = new AccountFactory();
-		IClient client = getClientByID(clientID);
-
-		if(accountFactory.createAccount(type, client, this.guid.generateID(), interestRate) == null)
-			return false;
-		return true;
 	}
 
 	public boolean closeAccount(int accountNum)
